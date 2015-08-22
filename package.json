@@ -1,0 +1,17 @@
+{
+  "name": "phantom_build_html",
+  "version": "1.0.0",
+  "description": "phantom build html,生成静态文件",
+  "main": "index.js",
+  "scripts": {
+    "test": ""
+  },
+  "author": "theone",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^1.4.2",
+    "express": "^4.13.3",
+    "phantom": "^0.7.2",
+    "mkdirp": "^0.5.0"
+  }
+}
