@@ -7,7 +7,8 @@ var express = require('express'),
 
 var config = {
   'cachedir' : './_cache',
-  'domain' : 'http://www.theone.io'
+  'domain' : 'http://www.theone.io',
+  'expiretime' : '36000'
 };
 
 // app.get('/', function (req, res) {
@@ -40,10 +41,21 @@ app.use(function(req, res){
   async.waterfall([function(cb){
     fs.exists(filePath, function (exists) {
       if(exists) {
-        fs.readFile(filePath, function (err, data) {
-          if (err) throw err;
-          cb(null, data);
-        });
+
+        var stat = fs.statSync(filePath),
+          modifyTime = stat.mtime.getTime(),
+          nowTime = Date.now();
+
+          if( nowTime - modifyTime > config.expiretime * 1000 ) {
+            // console.log(stat);
+            // console.log('更新');
+            saveHtml(req.url, cb);
+          } else {
+            fs.readFile(filePath, function (err, data) {
+              if (err) throw err;
+              cb(null, data);
+            });
+          }
       } else {
         saveHtml(req.url, cb);
       }
