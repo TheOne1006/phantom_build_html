@@ -35,7 +35,7 @@ app.use(function(req, res){
   // if(req.url.match(jsAndCssMatch)){
   //   res.redirect(config.domain + req.url);
   //   return;
-  //   console.log('log1:',config.domain + req.url);
+  //   // console.log('log1:',config.domain + req.url);
   // }
 
   async.waterfall([function(cb){
@@ -84,6 +84,7 @@ function saveHtml(url, next){
                 page.evaluate(function () {
                     return document.all[0].outerHTML;
                 }, function (result) {
+                  result = replace_url_by_css(result);
                     // console.log(result);
                     // 建立缓存
                     getFullDir(url, function(){
@@ -92,7 +93,7 @@ function saveHtml(url, next){
                       next(null, result);
                     });
                 });
-            }, 500);
+            }, 200);
         });
     });
   }, {
@@ -120,6 +121,14 @@ function getFullDir(url, cb) {
       cb();
   });
 
+}
+/**
+ * 替换网址
+ * @return new string 
+ */
+function replace_url_by_css (str) {
+  str=str.replace("/public/css/home/",config.domain+"/public/css/home/");
+  return str;
 }
 
 app.listen(3003);
