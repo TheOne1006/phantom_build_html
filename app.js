@@ -8,7 +8,7 @@ var express = require('express'),
 var config = {
   'cachedir' : './_cache',
   'domain' : 'http://www.theone.io',
-  'expiretime' : '36000'
+  'expiretime' : '3600'
 };
 
 // app.get('/', function (req, res) {
