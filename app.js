@@ -69,7 +69,7 @@ app.use(function(req, res){
 
 function saveHtml(url, next){
   var openUrl = config.domain + url,
-  jsAndHtmlCssMatch = /.+(.html)|(\.css)|(\.js)/g;
+  jsAndHtmlCssMatch = /.+(\.html)|(\.css)|(\.js)/g;
 
   if(url.match(jsAndHtmlCssMatch)) {
     return next();
