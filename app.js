@@ -27,6 +27,22 @@ var fileHooks = {
   '/cate/html/':'/cate/html/1'
 };
 
+/**
+ * tmp hooks
+ */
+app.use(function(req, res, next){
+  
+  if(req.url === '/robots.txt'){
+    res.write("User-agent: *\n");
+    res.write("Disallow: /public/\n");
+    res.write("Disallow: /angular/\n");
+    res.end();
+  }else{
+    next();
+  }
+
+});
+
 app.use(function(req, res){
   // res.end('hello world');
   var filePath = getFilePath(req.url),
