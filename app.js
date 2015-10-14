@@ -85,7 +85,7 @@ app.use(function(req, res){
 
 function saveHtml(url, next){
   var openUrl = config.domain + url,
-  jsAndHtmlCssMatch = /.+(\.html)|(\.css)|(\.js)/g;
+  jsAndHtmlCssMatch = /.+(\.html)|(\.css)|(\.js)|(\.svg)/g;
 
   if(url.match(jsAndHtmlCssMatch)) {
     return next();
@@ -143,7 +143,7 @@ function getFullDir(url, cb) {
  * @return new string 
  */
 function replace_url_by_css (str) {
-  str=str.replace("/public/css/home/",config.domain+"/public/css/home/");
+  str=str.replace("/public/",config.domain+"/public/");
   return str;
 }
 
