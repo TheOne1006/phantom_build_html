@@ -46,13 +46,12 @@ app.use(function(req, res, next){
 app.use(function(req, res){
   // res.end('hello world');
   var filePath = getFilePath(req.url),
-  jsAndCssMatch = /.+(\.css)|(\.js)/g;
+  jsAndCssMatch = /.+(\.css)|(\.js)|(\.svg)/g;
 
-  // if(req.url.match(jsAndCssMatch)){
-  //   res.redirect(config.domain + req.url);
-  //   return;
-  //   // console.log('log1:',config.domain + req.url);
-  // }
+  if(req.url.match(jsAndCssMatch)){
+    res.redirect(config.domain + req.url);
+    return;
+  }
 
   async.waterfall([function(cb){
     fs.exists(filePath, function (exists) {
