@@ -1,5 +1,5 @@
 node_modules/
 _cache/
-static/
 !static/robots.txt
 !static/favicon.ico
+static/*

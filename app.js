@@ -164,11 +164,7 @@ function getFullDir(url, cb) {
  * @return new string 
  */
 function replace_url_by_css (str) {
-<<<<<<< HEAD
   str=str.replace('/public/css/home/',config.domain+'/public/css/home/');
-=======
-  str=str.replace(/\/public\//g,config.domain+"/public/");
->>>>>>> origin/master
   return str;
 }
 
