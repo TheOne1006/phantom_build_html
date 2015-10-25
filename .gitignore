@@ -2,4 +2,4 @@ node_modules/
 _cache/
 !static/robots.txt
 !static/favicon.ico
-static/*
+static/public/*
