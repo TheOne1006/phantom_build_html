@@ -102,7 +102,11 @@ app.use(function(req, res){
 
 function saveHtml(url, next){
   var openUrl = config.domain + url,
+<<<<<<< HEAD
   statusFileMatch = /.+(\.html)|(\.css)|(\.js)/g;
+=======
+  jsAndHtmlCssMatch = /.+(\.html)|(\.css)|(\.js)|(\.svg)/g;
+>>>>>>> origin/master
 
   if(url.match(statusFileMatch)) {
     console.log(url);
@@ -164,7 +168,11 @@ function getFullDir(url, cb) {
  * @return new string 
  */
 function replace_url_by_css (str) {
+<<<<<<< HEAD
   str=str.replace('/public/css/home/',config.domain+'/public/css/home/');
+=======
+  str=str.replace(/\/public\//g,config.domain+"/public/");
+>>>>>>> origin/master
   return str;
 }
 
