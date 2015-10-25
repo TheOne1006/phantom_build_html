@@ -1,14 +1,18 @@
+'use strict';
+
 var express = require('express'),
   phantom = require('phantom'),
   async = require('async'),
   mkdirp = require('mkdirp'),
+  http = require('http'),
   fs = require('fs'),
   app = express();
 
 var config = {
   'cachedir' : './_cache',
   'domain' : 'http://www.theone.io',
-  'expiretime' : '360000'
+  'expiretime' : '3600',
+  'staticPath' : './static'
 };
 
 // app.get('/', function (req, res) {
@@ -27,32 +31,39 @@ var fileHooks = {
   '/cate/html/':'/cate/html/1'
 };
 
+var saveStaticPaths = [
+  '/public/scripts/home/:file',
+  '/public/components/bootstrap-sass-official/assets/fonts/bootstrap/:file',
+  '/public/css/home/:file',
+  '/public/svg/:file'
+  // '/angular/scripts/home/' //加载后报错
+];
+
+
+app.use(express.static(config.staticPath));
+
+
 /**
- * tmp hooks
+ * 下载文件如果不存在, 则下载
  */
-app.use(function(req, res, next){
-  
-  if(req.url === '/robots.txt'){
-    res.write("User-agent: *\n");
-    res.write("Disallow: /public/\n");
-    res.write("Disallow: /angular/\n");
-    res.end();
-  }else{
-    next();
-  }
+app.get(saveStaticPaths,function(req,res){
+  var filePath = req.url;
+
+  // 遍历创建目录
+  getFullDir(config.staticPath+filePath, function(){
+    // 下载
+    download(config.domain+filePath, function (staticData) {
+
+      fs.writeFile(config.staticPath+filePath, staticData);
+      res.end(staticData);
+    });
+  });
 
 });
 
 app.use(function(req, res){
   // res.end('hello world');
-  var filePath = getFilePath(req.url),
-  jsAndCssMatch = /.+(\.css)|(\.js)/g;
-
-  // if(req.url.match(jsAndCssMatch)){
-  //   res.redirect(config.domain + req.url);
-  //   return;
-  //   // console.log('log1:',config.domain + req.url);
-  // }
+  var filePath = getFilePath(req.url);
 
   async.waterfall([function(cb){
     fs.exists(filePath, function (exists) {
@@ -62,13 +73,18 @@ app.use(function(req, res){
           modifyTime = stat.mtime.getTime(),
           nowTime = Date.now();
 
+          // 过期
           if( nowTime - modifyTime > config.expiretime * 1000 ) {
             // console.log(stat);
             // console.log('更新');
             saveHtml(req.url, cb);
           } else {
+            // 未过期,读取文件
             fs.readFile(filePath, function (err, data) {
-              if (err) throw err;
+              if (err) {
+                return;
+              }
+
               cb(null, data);
             });
           }
@@ -83,11 +99,13 @@ app.use(function(req, res){
 });
 
 
+
 function saveHtml(url, next){
   var openUrl = config.domain + url,
-  jsAndHtmlCssMatch = /.+(\.html)|(\.css)|(\.js)/g;
+  statusFileMatch = /.+(\.html)|(\.css)|(\.js)/g;
 
-  if(url.match(jsAndHtmlCssMatch)) {
+  if(url.match(statusFileMatch)) {
+    console.log(url);
     return next();
   }
 
@@ -100,10 +118,13 @@ function saveHtml(url, next){
                 page.evaluate(function () {
                     return document.all[0].outerHTML;
                 }, function (result) {
-                  result = replace_url_by_css(result);
+                    // 替换css 路径
+                    // result = replace_url_by_css(result);
+
                     // console.log(result);
                     // 建立缓存
-                    getFullDir(url, function(){
+                    var saveUrl = config.cachedir + url;
+                    getFullDir(saveUrl, function(){
                       fs.writeFile(getFilePath(url), result);
                       ph.exit();
                       next(null, result);
@@ -124,7 +145,7 @@ function getFilePath(url){
 }
 
 function getFullDir(url, cb) {
-  var urlArr = (config.cachedir + url).split('/');
+  var urlArr = url.split('/');
   urlArr.pop();
   var dir = urlArr.join('/');
   console.log(dir);
@@ -143,8 +164,29 @@ function getFullDir(url, cb) {
  * @return new string 
  */
 function replace_url_by_css (str) {
-  str=str.replace("/public/css/home/",config.domain+"/public/css/home/");
+  str=str.replace('/public/css/home/',config.domain+'/public/css/home/');
   return str;
+}
+
+/**
+ * 下载
+ */
+function download(url, cb) {
+ var data = '';
+ var request = http.get(url, function(res) {
+
+   res.on('data', function(chunk) {
+     data += chunk;
+   });
+
+   res.on('end', function() {
+     cb(data);
+   });
+ });
+
+ request.on('error', function(e) {
+   console.log('Got error: ' + e.message);
+ });
 }
 
 app.listen(3003);
