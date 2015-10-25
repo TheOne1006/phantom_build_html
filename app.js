@@ -102,11 +102,7 @@ app.use(function(req, res){
 
 function saveHtml(url, next){
   var openUrl = config.domain + url,
-<<<<<<< HEAD
-  statusFileMatch = /.+(\.html)|(\.css)|(\.js)/g;
-=======
-  jsAndHtmlCssMatch = /.+(\.html)|(\.css)|(\.js)|(\.svg)/g;
->>>>>>> origin/master
+  statusFileMatch = /.+(\.html)|(\.css)|(\.js)|(\.svg)/g;
 
   if(url.match(statusFileMatch)) {
     console.log(url);
