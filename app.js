@@ -6,7 +6,8 @@ var express = require('express'),
   mkdirp = require('mkdirp'),
   http = require('http'),
   fs = require('fs'),
-  app = express();
+  app = express(),
+  Download = require('download');
 
 var config = {
   'cachedir' : './_cache',
@@ -54,8 +55,17 @@ app.get(saveStaticPaths,function(req,res){
     // 下载
     download(config.domain+filePath, function (staticData) {
 
-      fs.writeFile(config.staticPath+filePath, staticData);
-      res.end(staticData);
+      // fs.writeFile(config.staticPath+filePath, staticData);
+       var urlArr = filePath.split('/');
+          urlArr.pop();
+        var distPath = urlArr.join('/');
+
+      new Download({mode: '755'})
+        .get(config.domain+filePath)
+        .dest(config.staticPath+distPath)
+        .run(function () {
+          res.end(staticData);
+        });
     });
   });
 

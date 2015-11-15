@@ -1,7 +1,7 @@
 {
   "name": "phantom_build_html",
-  "version": "1.0.0",
-  "description": "phantom build html,生成静态文件",
+  "version": "1.0.2",
+  "description": "phantom build html,生成静态文件,支持SEO",
   "main": "index.js",
   "scripts": {
     "test": ""
@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "async": "^1.4.2",
+    "download": "^4.4.1",
     "express": "^4.13.3",
     "gulp-express": "^0.3.5",
     "gulp-nodemon": "^2.0.4",
